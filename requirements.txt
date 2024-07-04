@@ -1,0 +1,5 @@
+fastapi[all]
+tensorflow-cpu
+numpy
+uvicorn[standard]
+PIL
