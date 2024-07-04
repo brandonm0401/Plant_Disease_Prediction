@@ -13,26 +13,28 @@ templates = Jinja2Templates(directory='templates')
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/",response_class = HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 def homepage(request: Request):
-    return templates.TemplateResponse("index.html",{'request':request})
+    return templates.TemplateResponse("index.html", {'request': request})
 
 @app.post("/upload-image/")
 async def upload_image(file: UploadFile = File(...)):
     contents = await file.read()
 
     image = Image.open(io.BytesIO(contents))
-    image = image.resize((150,150))
+    image = image.resize((150, 150))
     img_array = np.array(image)
 
-    img_array = img_array/255.0
-    img_array = img_array.reshape(1,150,150,3)
+    img_array = img_array / 255.0
+    img_array = img_array.reshape(1, 150, 150, 3)
 
-    prediction = int(np.argmax(model.predict(img_array)))
-    return RedirectResponse(url=f"/prediction?prediction={prediction}", status_code=303)
+    predictions = model.predict(img_array)
+    percentage = round(np.max(predictions) * 100, 2)
+    prediction = np.argmax(predictions)
+    return RedirectResponse(url=f"/prediction?prediction={prediction}&percentage={percentage}", status_code=303)
 
 @app.get("/prediction", response_class=HTMLResponse)
-async def home_page(request: Request, prediction: int = Query(...)):
-    class_labels = ['Healthy','Unhealthy']
+async def prediction_page(request: Request, prediction: int, percentage: float):
+    class_labels = ['Healthy', 'Unhealthy']
     predicted_class = class_labels[prediction]
-    return templates.TemplateResponse("index.html", {"request": request, "predicted_class": predicted_class})
+    return templates.TemplateResponse("index.html", {"request": request, "predicted_class": predicted_class, "percentage": percentage})
