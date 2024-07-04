@@ -1,6 +1,6 @@
-# Leaf Disease Predictor
+# Plant Disease Predictor
 
-This project is a web application that predicts whether a plant leaf is healthy or diseased based on an uploaded image. The application is built using FastAPI for the backend and TensorFlow for the machine learning model.
+This project is a web application that predicts whether a plant is healthy or diseased based on an uploaded image of a leaf. The application is built using FastAPI for the backend and TensorFlow for the machine learning model.
 
 ## Table of Contents
 
